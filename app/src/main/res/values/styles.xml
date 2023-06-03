@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Estilo do aplicativo -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Cor da barra de status -->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+
+        <!-- Cor da barra de navegação -->
+        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+
+        <!-- Outras configurações de estilo do aplicativo -->
+        <!-- ... -->
+    </style>
+</resources>
