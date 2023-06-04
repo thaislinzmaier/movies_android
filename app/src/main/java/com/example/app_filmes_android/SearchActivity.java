@@ -61,7 +61,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                 if (response.isSuccessful()) {
                     MovieResponse movieResponse = response.body();
-                    List<Movie> movies = movieResponse.getMovies();
+                    List<MovieResponse> movies = movieResponse.getMovies();
                     movieAdapter.updateMovies(movies);
                     movieAdapter.notifyDataSetChanged();
                     dbHelper.insertMovies(movies);

@@ -1,40 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutDetalhes"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/moviePosterImageView"
-        android:layout_width="120dp"
-        android:layout_height="180dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:src="@drawable/placeholder_image" />
+        android:src="@drawable/placeholder_image"/>
 
     <TextView
         android:id="@+id/movieTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="16dp" />
 
     <TextView
         android:id="@+id/movieOverviewTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+        android:layout_below="@id/movieTitleTextView"
+        android:padding="16dp" />
 
     <Button
-        android:id="@+id/btnDetails"
+        android:id="@+id/backToResultsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Detalhes" />
+        android:layout_below="@id/movieOverviewTextView"
+        android:text="Voltar" />
 
     <Button
         android:id="@+id/btnSalvar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/backToResultsButton"
         android:text="Salvar no perfil" />
 
-</LinearLayout>
+
+</RelativeLayout>

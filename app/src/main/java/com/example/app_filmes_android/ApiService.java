@@ -2,6 +2,7 @@ package com.example.app_filmes_android;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -11,6 +12,12 @@ public interface ApiService {
     Call<MovieResponse> searchMovies(
             @Query("api_key") String apiKey,
             @Query("query") String query
+    );
+
+    @GET("movie/{movie_id}")
+    Call<MovieResponse> getMovieDetails(
+            @Path("movie_id") String movieId,
+            @Query("api_key") String apiKey
     );
 }
 

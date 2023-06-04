@@ -4,6 +4,10 @@ public class Movie {
     private String title;
     private String overview;
 
+    private String url_poster;
+
+    private String id;
+
     public String getTitle() {
         return title;
     }
@@ -18,5 +22,13 @@ public class Movie {
 
     public void setOverview(String overview) {
         this.overview = overview;
+    }
+
+    public void setUrlPoster(String url_poster) {
+        this.url_poster = url_poster;
+    }
+
+    public String getId() {
+        return id;
     }
 }

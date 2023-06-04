@@ -35,6 +35,7 @@
                 android:layout_centerHorizontal="true"
                 android:padding="20dp"
                 android:text="Pesquisar" />
+
         </RelativeLayout>
 
         <!-- Layout dos resultados -->
@@ -47,6 +48,30 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/layoutDetalhes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <Button
+            android:id="@+id/btnDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detalhes" />
+
+            <Button
+                android:id="@+id/backToResultsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Voltar" />
+
+            <Button
+                android:id="@+id/btnSalvar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Salvar no perfil" />
 
         </RelativeLayout>
 
