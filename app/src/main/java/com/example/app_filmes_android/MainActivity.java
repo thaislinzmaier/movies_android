@@ -11,11 +11,13 @@ import com.bumptech.glide.request.target.Target;
 import com.example.app_filmes_android.databinding.ActivityMovieDetailsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
     private MovieAdapter movieAdapter;
     private EditText etMovieTitle;
     private Button btnSearch;
+    private Button botaoListaFilmes;
     private Button btnDetails;
     private Button backToResultsButton;
     private ApiService apiService;
@@ -59,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
     private RelativeLayout layoutDetalhes;
     private RelativeLayout layoutSearch;
     private RelativeLayout layoutResults;
+
+    private RelativeLayout layoutMovies;
+
+    ArrayList<Movie> listaMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         recyclerView = binding.recyclerView;
         etMovieTitle = binding.editTextMovieTitle;
         btnSearch = binding.btnSearch;
+        botaoListaFilmes = binding.botaoListaFilmes;
 
         apiService = ApiClient.getRetrofit().create(ApiService.class);
         dbHelper = new DatabaseHelper(this);
@@ -94,6 +102,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
             }
         });
 
+        botaoListaFilmes = findViewById(R.id.botaoListaFilmes);
+        botaoListaFilmes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMoviesLayout();
+            }
+        });
+
         FloatingActionButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,10 +123,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         btnDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*int position = recyclerView.getChildAdapterPosition(v);
-                MovieResponse movie = movieAdapter.getMovie(position);
-                String movieId = movie.getId();
-                onDetailsClick(movieId);*/
             }
         });
         backToResultsButton = findViewById(R.id.backToResultsButton);
@@ -235,6 +247,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         layoutSearch.setVisibility(View.GONE);
         layoutResults.setVisibility(View.VISIBLE);
         layoutDetalhes.setVisibility(View.GONE);
+    }
+
+    private void showMoviesLayout(){
+        ViewFlipper viewFlipper = findViewById(R.id.viewFlipper);
+
+        ListView lista = (ListView) findViewById(R.id.lvMovies);
+        listaMovies = dbHelper.getAllMovies();
+        FilmeAdapter adapter = new FilmeAdapter(this, listaMovies);
+        lista.setAdapter(adapter);
+
+        layoutMovies = findViewById(R.id.layoutMovies);
+
+        layoutSearch.setVisibility(View.GONE);
+        layoutMovies.setVisibility(View.VISIBLE);
     }
 
 

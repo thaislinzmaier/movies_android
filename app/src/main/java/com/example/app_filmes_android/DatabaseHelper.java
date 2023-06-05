@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -19,6 +20,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_OVERVIEW = "overview";
+
+    private static final String[] COLUNAS = {COLUMN_ID, COLUMN_TITLE, COLUMN_OVERVIEW};
     private Context context;
 
     public DatabaseHelper(Context context) {
@@ -100,4 +103,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return tableExists;
     }
+
+    private Movie cursorToMovie(Cursor cursor) {
+        Movie movie = new Movie();
+        movie.setId(Integer.
+                parseInt(cursor.getString(0)));
+        movie.setTitle(cursor.getString(1));
+        movie.setOverview(cursor.getString(2));
+        return movie;
+    }
+    public ArrayList<Movie> getAllMovies() {
+        ArrayList<Movie> listaMovies = new ArrayList<Movie>();
+        String query = "SELECT * FROM " +
+                TABLE_MOVIES
+                + " ORDER BY " + COLUMN_TITLE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Movie movie = cursorToMovie(cursor);
+                listaMovies.add(movie);
+            } while (cursor.moveToNext());
+        }
+        return listaMovies;
+    }
+
+    public Movie getMovie(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MOVIES,
+                COLUNAS,
+                " id = ?",
+                new String[] { String.valueOf(id) },
+                null,
+                null,
+                null,
+                null);
+            if (cursor == null) {
+                return null;
+            } else {
+                cursor.moveToFirst();
+                Movie movie = cursorToMovie(cursor);
+                return movie;
+            }
+        }
+
+    public int updateMovie(Movie movie) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, movie.getTitle());
+        values.put(COLUMN_OVERVIEW, movie.getOverview());
+        int i = db.update(TABLE_MOVIES,values,COLUMN_ID + " = ?", new String[]{ String.valueOf(movie.getId()) });
+        db.close();
+        return i;
+    }
+
+    public int deleteMovie(Movie movie) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int i = db.delete(TABLE_MOVIES, COLUMN_ID + " = ?", new String[]{ String.valueOf(movie.getId()) });
+        db.close();
+        return i;
+    }
 }
+

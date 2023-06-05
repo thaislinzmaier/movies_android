@@ -104,19 +104,4 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         }
     }
 
-    //@Override
-    /*public void onBindViewHolder(MovieViewHolder holder, int position) {
-        MovieResponse movie = movies.get(position);
-        // Configurar os dados do filme no item do filme
-        Glide.with(holder.itemView)
-                .load(movie.getPosterPath())  // Substitua "getImageUrl()" pelo método correto para obter a URL da imagem do filme
-                .placeholder(R.drawable.placeholder_image)  // Imagem de placeholder enquanto a imagem do filme é carregada
-                .into(holder.imageView);
-
-        holder.btnDetails.setOnClickListener(view -> {
-            if (itemClickListener != null) {
-                itemClickListener.onDetailsClick(movie);
-            }
-        });
-    }*/
 }
