@@ -18,25 +18,31 @@
             android:layout_height="match_parent"
             android:background="@color/meu_fundo">
 
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editTextMovieTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="88dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="88dp"
+                android:background="@color/cinza_claro"
+                android:text="Pesquisar na API" />
+
             <EditText
                 android:id="@+id/editTextMovieTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="274dp"
                 android:focusableInTouchMode="true"
                 android:hint="Digite o título do filme "
                 android:inputType="text"
                 android:padding="16dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white" />
-
-            <Button
-                android:id="@+id/btnSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/editTextMovieTitle"
-                android:text="Pesquisar na API"
-                android:background="@color/cinza_claro"/>
 
             <Button
                 android:id="@+id/botaoListaFilmes"
@@ -48,27 +54,33 @@
                 android:text="Seus filmes"
                 android:background="@color/cinza_claro"/>
 
-            <EditText
-                android:id="@+id/pesquisaBdLocal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:focusableInTouchMode="true"
-                android:inputType="text"
-                android:layout_marginTop="40dp"
-                android:padding="16dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                android:layout_below="@id/btnSearch"
-                android:hint="Digite o título do filme" />
-
             <Button
                 android:id="@+id/btnPesquisaPorTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/pesquisaBdLocal"
-                android:text="Pesquisar no seu perfil"
-                android:background="@color/cinza_claro" />
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="88dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="88dp"
+                android:layout_marginBottom="100dp"
+                android:background="@color/cinza_claro"
+                android:text="Pesquisar no seu perfil" />
+
+            <EditText
+                android:id="@+id/pesquisaBdLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnSearch"
+                android:layout_marginTop="81dp"
+                android:focusableInTouchMode="true"
+                android:hint="Digite o título do filme"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
         </RelativeLayout>
         <RelativeLayout
