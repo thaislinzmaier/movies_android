@@ -44,10 +44,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 outputStream.flush();
                 outputStream.close();
                 inputStream.close();
-                Log.w("TAG", "SALVOU ESSA PORRA");
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.w("TAG", "NÃO SALVOU ESSA DESGRAÇAAAAAAAAAAAAAAAAAAAAAAAA");
             }
     }
 
@@ -60,7 +58,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_ID + " INTEGER PRIMARY KEY, " +
                     COLUMN_TITLE + " TEXT, " +
                     COLUMN_OVERVIEW + " TEXT" +
-                    // Adicione outras colunas na tabela conforme necessário
                     ")";
             db.execSQL(createTableQuery);
         }
@@ -68,17 +65,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Aqui você pode atualizar o esquema do banco de dados, se necessário
     }
 
     public void insertMovie(Movie movie) {
         SQLiteDatabase db = getWritableDatabase();
-        Log.w("TAG", String.valueOf(db));
 
         String[] projection = {"id"};
         String selection = "id = ?";
         String[] selectionArgs = {String.valueOf(movie.getId())};
-        Log.w("TAG", String.valueOf(movie.getId()));
         Cursor cursor = db.query("movies", projection, selection, selectionArgs, null, null, null);
 
         if (cursor.getCount() > 0) {
@@ -91,7 +85,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_TITLE, movie.getTitle());
             values.put(COLUMN_OVERVIEW, movie.getOverview());
             db.insert(TABLE_MOVIES, null, values);
-            Log.w("TAG", "INSERIU O FILME COM ID NOVO");
 
         } else {
             ContentValues values = new ContentValues();
@@ -99,7 +92,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_TITLE, movie.getTitle());
             values.put(COLUMN_OVERVIEW, movie.getOverview());
             db.insert(TABLE_MOVIES, null, values);
-            Log.w("TAG", "INSERIU O FILME COM ID VELHO");
 
         }
         cursor.close();

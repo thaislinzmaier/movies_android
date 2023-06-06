@@ -28,7 +28,6 @@ public class NetworkRequestTask extends AsyncTask<String, Void, JSONObject> {
         Request request = new Request.Builder()
                 .url(baseUrl)
                 .build();
-        Log.w("TAG", baseUrl);
         try {
             okhttp3.Response response_api = client.newCall(request).execute();
             String jsonData = response_api.body().string();

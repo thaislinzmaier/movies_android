@@ -16,19 +16,15 @@ public class MovieViewHolder extends RecyclerView.ViewHolder{
 
     public MovieViewHolder(View itemView) {
         super(itemView);
-
-        // Inicialização das views dentro do item do filme
         imageView = itemView.findViewById(R.id.moviePosterImageView);
         textViewTitle = itemView.findViewById(R.id.movieTitleTextView);
         textViewOverview = itemView.findViewById(R.id.movieOverviewTextView);
     }
 
-    // Métodos para atualizar as views com os dados do filme
     public void bind(MovieResponse movie) {
-        // Atualize as views com os dados do filme
         Glide.with(itemView.getContext())
                 .load("https://image.tmdb.org/t/p/w500" + movie.getPosterPath())
-                .placeholder(R.drawable.placeholder_image) // Recurso de imagem de placeholder enquanto a imagem é carregada
+                .placeholder(R.drawable.placeholder_image)
                 .into(imageView);
 
         textViewTitle.setText(movie.getTitle());

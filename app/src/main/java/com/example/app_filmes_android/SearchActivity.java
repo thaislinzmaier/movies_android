@@ -68,7 +68,6 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             public void onFailure(Call<MovieResponse> call, Throwable t) {
-                // Trate o erro, se necessário
             }
         });
     }

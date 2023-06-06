@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.getLogger("TAG").setLevel(Level.ALL);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         bindingDetails = ActivityMovieDetailsBinding.inflate(getLayoutInflater());
@@ -232,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         layoutMovies = findViewById(R.id.layoutMovies);
         layoutSearch.setVisibility(View.GONE);
         layoutMovies.setVisibility(View.VISIBLE);
-        Log.w("TAG", "ENTROU NA VIEW DE RESULTADOS");
     }
 
     private void searchMovies(String movieTitle) {
@@ -272,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                 if (response.isSuccessful()) {
-                    Log.w("TAG", "PASSOU AQUI");
                     MovieResponse movieResponse = response.body();
                     String title = movieResponse.getTitle();
                     String overview = movieResponse.getOverview();
@@ -332,7 +329,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
                 movie.setTitle(title);
                 movie.setOverview(overview);
                 dbHelper.insertMovie(movie);
-                Log.w("TAG", "PASSOU PELA INSERCAO DE FILME");
 
             }
         });
@@ -388,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         layoutMovies = findViewById(R.id.layoutMovies);
         layoutSearch.setVisibility(View.GONE);
         layoutMovies.setVisibility(View.VISIBLE);
-        Log.w("TAG", "ENTROU NA VIEW DE RESULTADOS");
     }
 }
 
