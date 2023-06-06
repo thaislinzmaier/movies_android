@@ -28,7 +28,7 @@
                 android:padding="16dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
-                android:hint="Digite o título do filme" />
+                android:hint="Digite o título do filme que deseja procurar na API" />
 
             <Button
                 android:id="@+id/btnSearch"
@@ -47,6 +47,27 @@
                 android:layout_marginTop="20dp"
                 android:text="Seus filmes"
                 android:background="@color/cinza_claro"/>
+
+            <EditText
+                android:id="@+id/pesquisaBdLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:focusableInTouchMode="true"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:layout_below="@id/btnSearch"
+                android:hint="Digite o título do filme que deseja procurar no seu perfil" />
+
+            <Button
+                android:id="@+id/btnPesquisaPorTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pesquisaBdLocal"
+                android:text="Pesquisar"
+                android:background="@color/cinza_claro" />
 
         </RelativeLayout>
         <RelativeLayout

@@ -7,13 +7,16 @@
 
     <ImageView
         android:id="@+id/moviePosterImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
+        android:layout_width="1080px"
+        android:layout_height="1080px"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
         android:src="@drawable/placeholder_image"/>
 
     <TextView
         android:id="@+id/movieTitleTextView"
+        android:layout_below="@id/moviePosterImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
@@ -40,6 +43,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/backToResultsButton"
         android:text="Salvar no perfil" />
-
 
 </RelativeLayout>

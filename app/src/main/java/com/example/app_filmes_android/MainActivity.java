@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -61,10 +62,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private EditText etMovieTitle;
+    private EditText pesquisaBdLocal;
     private Button btnSearch;
 
     private Button btnSalvar;
     private Button botaoListaFilmes;
+
+    private Button btnPesquisaPorTitulo;
     private Button btnDetails;
     private Button backToResultsButton;
     private ApiService apiService;
@@ -103,8 +107,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
 
         recyclerView = binding.recyclerView;
         etMovieTitle = binding.editTextMovieTitle;
+        pesquisaBdLocal = binding.pesquisaBdLocal;
         btnSearch = binding.btnSearch;
         botaoListaFilmes = binding.botaoListaFilmes;
+        btnPesquisaPorTitulo = binding.btnPesquisaPorTitulo;
 
         apiService = ApiClient.getRetrofit().create(ApiService.class);
         dbHelper = new DatabaseHelper(this);
@@ -128,6 +134,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
             public void onClick(View v) {
                 String movieTitle = etMovieTitle.getText().toString();
                 searchMovies(movieTitle);
+            }
+        });
+
+        btnPesquisaPorTitulo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String movieTitle = pesquisaBdLocal.getText().toString();
+                procuraFilmeBdLocal(movieTitle);
             }
         });
 
@@ -175,6 +189,50 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
             networkStatusIcon.setImageResource(R.drawable.ic_network_offline);
             networkStatusText.setText("Offline");
         }
+    }
+    public void procuraFilmeBdLocal(String movieTitle){
+        DatabaseHelper dbhelper = new DatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {"id", "title"};
+        String selection = "title LIKE ?";
+        String[] selectionArgs = {"%" + movieTitle + "%"};
+
+        Cursor cursor = db.query("movies", projection, selection, selectionArgs, null, null, null);
+
+        ArrayList<Movie> filmesEncontrados = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            String filmeTitulo = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+            Movie filme = new Movie();
+            filme.setId(id);
+            filme.setTitle(filmeTitulo);
+            filmesEncontrados.add(filme);
+        }
+
+        cursor.close();
+        db.close();
+
+        ViewFlipper viewFlipper = findViewById(R.id.viewFlipper);
+
+        ListView lista = (ListView) findViewById(R.id.lvMovies);
+        FilmeAdapter adapter = new FilmeAdapter(this, filmesEncontrados);
+        lista.setAdapter(adapter);
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Intent intent = new Intent(MainActivity.this, EditarFilmeActivity.class);
+                intent.putExtra("ID", filmesEncontrados.get(position).getId());
+                startActivity(intent);
+            }
+        });
+
+        layoutMovies = findViewById(R.id.layoutMovies);
+        layoutSearch.setVisibility(View.GONE);
+        layoutMovies.setVisibility(View.VISIBLE);
+        Log.w("TAG", "ENTROU NA VIEW DE RESULTADOS");
     }
 
     private void searchMovies(String movieTitle) {
@@ -282,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         bindingDetails.backToResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.showResultsLayout();
+                finish();
             }
         });
 
