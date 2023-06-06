@@ -11,14 +11,25 @@ import com.bumptech.glide.request.target.Target;
 import com.example.app_filmes_android.databinding.ActivityMovieDetailsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
@@ -44,28 +55,40 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.OnItemClickListener{
+public class MainActivity extends AppCompatActivity implements MovieAdapter.OnItemClickListener {
     private ActivityMainBinding binding;
-
     ActivityMovieDetailsBinding bindingDetails;
-
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private EditText etMovieTitle;
     private Button btnSearch;
+
+    private Button btnSalvar;
     private Button botaoListaFilmes;
     private Button btnDetails;
     private Button backToResultsButton;
     private ApiService apiService;
     private DatabaseHelper dbHelper;
-
     private RelativeLayout layoutDetalhes;
     private RelativeLayout layoutSearch;
     private RelativeLayout layoutResults;
-
     private RelativeLayout layoutMovies;
-
     ArrayList<Movie> listaMovies;
+
+    private ArrayList<Movie> filmesPesquisados;
+    private ImageView networkStatusIcon;
+    private TextView networkStatusText;
+
+    private int lastUsedId;
+
+    private String novoMovieId;
+
+    private BroadcastReceiver networkStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateNetworkStatus();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         bindingDetails = ActivityMovieDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStatusReceiver, intentFilter);
 
         recyclerView = binding.recyclerView;
         etMovieTitle = binding.editTextMovieTitle;
@@ -89,10 +115,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         movieAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(movieAdapter);
 
-
+        networkStatusIcon = findViewById(R.id.networkStatusIcon);
+        networkStatusText = findViewById(R.id.networkStatusText);
         layoutSearch = findViewById(R.id.layoutSearch);
         layoutResults = findViewById(R.id.layoutResults);
         layoutDetalhes = findViewById(R.id.layoutDetalhes);
+
+        updateNetworkStatus();
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showSearchLayout(); // Método para mostrar o layout de pesquisa
+                onBackPressed();
             }
         });
 
@@ -125,16 +154,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
             public void onClick(View v) {
             }
         });
-        backToResultsButton = findViewById(R.id.backToResultsButton);
-
-        backToResultsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showResultsLayout();// Método para mostrar o layout dos resultados
-            }
-        });
 
         movieAdapter.setOnItemClickListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkStatusReceiver);
+    }
+
+    private void updateNetworkStatus() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
+            networkStatusIcon.setImageResource(R.drawable.ic_network_online);
+            networkStatusText.setText("Online");
+        } else {
+            networkStatusIcon.setImageResource(R.drawable.ic_network_offline);
+            networkStatusText.setText("Offline");
+        }
     }
 
     private void searchMovies(String movieTitle) {
@@ -144,7 +184,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
                 if (response.isSuccessful()) {
                     MovieResponse movieResponse = response.body();
                     List<MovieResponse> movies = movieResponse.getMovies();
-                    //String posterPath = movieResponse.getPosterPath();
+                    ArrayList<Movie> movieList = new ArrayList<>();
+                    for (MovieResponse movieResponse2 : movies) {
+                        Movie movie = new Movie();
+                        movie.setId(Integer.parseInt(movieResponse2.getId()));
+                        movie.setTitle(movieResponse2.getTitle());
+                        movie.setOverview(movieResponse2.getOverview());
+                        movieList.add(movie);
+                    }
+                    filmesPesquisados = movieList;
 
                     movieAdapter.updateMovies(movies);
                     movieAdapter.notifyDataSetChanged();
@@ -153,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
                     layoutResults.setVisibility(View.VISIBLE);
                 }
             }
+
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
             }
@@ -161,8 +210,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
 
     @Override
     public void onDetailsClick(String movieId) {
-        Log.w("MainActivity", "PASSOU AQUI");
-        /*String movieId = movie.getId();*/
         apiService.getMovieDetails(movieId, API_KEY).enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
@@ -173,33 +220,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
                     String overview = movieResponse.getOverview();
                     String url_poster = movieResponse.getPosterPath();
 
-
                     bindingDetails.movieTitleTextView.setText(title);
                     bindingDetails.movieOverviewTextView.setText(overview);
 
                     new NetworkRequestTask(MainActivity.this).execute(movieId);
-
-                    Movie movie = new Movie();
-                    movie.setTitle(title);
-                    movie.setOverview(overview);
-                    movie.setUrlPoster(url_poster);
-                    // Defina outras informações do filme, se necessário
-
-                    dbHelper.insertMovie(movie);
-
-                } else {
-                    Log.w("TAG", "PASSOU AQUI no erro");
-                    // Trate o caso em que a resposta não é bem-sucedida
                 }
             }
 
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
-                // Trate o erro, se necessário
             }
         });
     }
-    void showDetailsLayout(ActivityMovieDetailsBinding bindingDetails, String posterUrl, String title, String overview) {
+
+    void showDetailsLayout(ActivityMovieDetailsBinding bindingDetails, String posterUrl, String title, String overview, String movieId) {
         ViewFlipper viewFlipper = findViewById(R.id.viewFlipper);
         viewFlipper.showNext();
         setContentView(bindingDetails.getRoot());
@@ -216,13 +250,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
                 .addListener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.e("TAG", "Erro ao carregar a imagem: " + e.getMessage());
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Log.d("TAG", "Imagem carregada com sucesso");
                         return false;
                     }
                 })
@@ -230,6 +262,30 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
 
         bindingDetails.backToResultsButton.setVisibility(View.VISIBLE);
         bindingDetails.btnSalvar.setVisibility(View.VISIBLE);
+
+        bindingDetails.btnSalvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bindingDetails.btnSalvar.setVisibility(View.VISIBLE);
+                String title = bindingDetails.movieTitleTextView.getText().toString();
+                String overview = bindingDetails.movieOverviewTextView.getText().toString();
+                Movie movie = new Movie();
+                movie.setId(Integer.parseInt(movieId));
+                movie.setTitle(title);
+                movie.setOverview(overview);
+                dbHelper.insertMovie(movie);
+                Log.w("TAG", "PASSOU PELA INSERCAO DE FILME");
+
+            }
+        });
+
+        bindingDetails.backToResultsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.this.showResultsLayout();
+            }
+        });
+
     }
 
     private void showSearchLayout() {
@@ -242,26 +298,39 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
 
     private void showResultsLayout() {
         ViewFlipper viewFlipper = findViewById(R.id.viewFlipper);
-        viewFlipper.setDisplayedChild(1); // Índice do layout dos resultados no ViewFlipper
+        View resultsView = findViewById(R.id.layoutResults);
 
-        layoutSearch.setVisibility(View.GONE);
-        layoutResults.setVisibility(View.VISIBLE);
-        layoutDetalhes.setVisibility(View.GONE);
+        int indexOfResultsView = viewFlipper.indexOfChild(resultsView);
+        viewFlipper.setDisplayedChild(indexOfResultsView);
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        if (recyclerView.getAdapter() == null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(movieAdapter);
+        }
     }
 
-    private void showMoviesLayout(){
+    private void showMoviesLayout() {
         ViewFlipper viewFlipper = findViewById(R.id.viewFlipper);
 
         ListView lista = (ListView) findViewById(R.id.lvMovies);
         listaMovies = dbHelper.getAllMovies();
         FilmeAdapter adapter = new FilmeAdapter(this, listaMovies);
         lista.setAdapter(adapter);
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Intent intent = new Intent(MainActivity.this, EditarFilmeActivity.class);
+                intent.putExtra("ID", listaMovies.get(position).getId());
+                startActivity(intent);
+            }
+        });
 
         layoutMovies = findViewById(R.id.layoutMovies);
-
         layoutSearch.setVisibility(View.GONE);
         layoutMovies.setVisibility(View.VISIBLE);
+        Log.w("TAG", "ENTROU NA VIEW DE RESULTADOS");
     }
-
-
 }
+

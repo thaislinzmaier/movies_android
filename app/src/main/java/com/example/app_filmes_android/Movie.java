@@ -3,10 +3,8 @@ package com.example.app_filmes_android;
 public class Movie {
     private String title;
     private String overview;
-
     private String url_poster;
-
-    private int id;
+    private Integer id;
 
     public String getTitle() {
         return title;

@@ -64,7 +64,6 @@ public class SearchActivity extends AppCompatActivity {
                     List<MovieResponse> movies = movieResponse.getMovies();
                     movieAdapter.updateMovies(movies);
                     movieAdapter.notifyDataSetChanged();
-                    dbHelper.insertMovies(movies);
                 }
             }
 

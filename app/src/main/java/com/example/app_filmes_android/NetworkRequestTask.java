@@ -43,6 +43,7 @@ public class NetworkRequestTask extends AsyncTask<String, Void, JSONObject> {
     protected void onPostExecute(JSONObject jsonObject) {
         if (jsonObject != null) {
             try{
+                String id = jsonObject.getString("id");
                 String posterPath = jsonObject.getString("poster_path");
                 String title = jsonObject.getString("title");
                 String overview = jsonObject.getString("overview");
@@ -51,14 +52,13 @@ public class NetworkRequestTask extends AsyncTask<String, Void, JSONObject> {
                 String baseUrlPoster = "https://image.tmdb.org/t/p/w500";
                 String posterUrl = baseUrlPoster + posterPath;
 
-                activity.showDetailsLayout(activity.bindingDetails, posterUrl, title, overview);
+                activity.showDetailsLayout(activity.bindingDetails, posterUrl, title, overview, id);
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
-        Log.e("TAG", "Erro ao obter os detalhes do filme");
     }
     }
 }

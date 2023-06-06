@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Estilo do aplicativo -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <!-- Cor da barra de status -->
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-
-        <!-- Cor da barra de navegação -->
+        <item name="android:background">@color/meu_fundo</item>
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
-
-        <!-- Outras configurações de estilo do aplicativo -->
-        <!-- ... -->
+        <item name="android:elevation">4dp</item>
     </style>
 </resources>
